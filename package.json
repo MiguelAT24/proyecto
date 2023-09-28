@@ -1,0 +1,32 @@
+{
+  "name": "sistem",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "autoprefixer": "10.4.16",
+    "axios": "^1.5.0",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^5.3.2",
+    "cookie-parser": "^1.4.6",
+    "eslint": "8.50.0",
+    "eslint-config-next": "13.5.2",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.6.1",
+    "next": "13.5.2",
+    "postcss": "8.4.30",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "^6.16.0",
+    "swr": "^2.2.2",
+    "tailwindcss": "3.3.3"
+  }
+}
