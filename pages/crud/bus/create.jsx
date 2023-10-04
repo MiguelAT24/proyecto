@@ -52,7 +52,7 @@ const CrearPage = () => {
 
   return (
     <div className="container">
-      <h1 className="my-4">Crear Autobús</h1>
+      <h1 className="my-4">Registrar Bus</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-row">
         <div className="form-group col-md-8">

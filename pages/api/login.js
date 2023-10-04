@@ -1,50 +1,41 @@
-import session from 'express-session';
+// pages/api/login.js
+
+import { sign } from "jsonwebtoken";
 import { findUserByUsername, validatePassword } from '../../lib/auth';
 
-const sessionMiddleware = session({
-  secret: 'tu_secreto_secreto', // Cambia esto por una cadena secreta segura
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }, // Cambia a true si estás usando HTTPS
-});
+export default async function handler(request, response) {
+  if (request.method === "POST") {
+    const { username, password } = await request.body;
 
-export default async (req, res) => {
-    if (req.method === 'POST') {
-      const { username, password } = req.body;
-  
-      try {
-        // Buscar el usuario en la base de datos
-        const user = await findUserByUsername(username);
-  
-        if (!user) {
-          return res.status(401).json({ message: 'Usuario no encontrado' });
-        }
-  
-        // Validar la contraseña
-        const isValid = await validatePassword(password, user.password);
-  
-        if (!isValid) {
-          console.log('error');
-          return res.status(401).json({ message: 'Contraseña incorrecta' });
-        }
-  
-        // Asegúrate de que req.session esté inicializado antes de establecer req.session.user
-        if (!req.session) {
-          req.session = {};
-        }
-  
-        req.session.user = user;
-         
-        // Responder con un mensaje de inicio de sesión exitoso
-        console.log('exito');
-        return res.status(200).json({ message: 'Inicio de sesión exitoso' });
-      } catch (error) {
-        console.log('error');
-        console.error('Error de inicio de sesión:', error);
-        return res.status(500).json({ message: 'Error de inicio de sesión' });
+    try {
+      const user = await findUserByUsername(username);
+
+      if (user && (await validatePassword(password, user.password))) {
+        // Las credenciales son válidas
+        // Coloca tu lógica de generación de token aquí
+
+        const token = sign(
+          {
+            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
+            username,
+          },
+          "secret"
+        );
+
+        response.setHeader('Set-Cookie', `myTokenName=${token}; HttpOnly; Secure; SameSite=Strict; Max-Age=${1000 * 60 * 60 * 24 * 30}; Path=/`);
+        
+        return response.status(200).json({ token }); // Devolver una respuesta JSON y establecer el estado de la respuesta
+      } else {
+        return response.status(401).json({
+          message: "Credenciales inválidas",
+        });
       }
-    } else {
-      // Si la solicitud no es un método POST, responder con un error 405 (Método no permitido)
-      return res.status(405).end();
+    } catch (error) {
+      console.error("Error al autenticar al usuario:", error);
+      return response.status(500).json({ error: "Error al autenticar al usuario" });
     }
-  };
+  } else {
+    // Maneja otros métodos HTTP si es necesario
+    return response.status(405).json({ error: "Método HTTP no admitido" });
+  }
+}

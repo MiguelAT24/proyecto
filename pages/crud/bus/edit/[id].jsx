@@ -55,7 +55,7 @@ export default function EditBus() {
      
       if (response.status === 200) {
         // Redirige al usuario a la página de detalles del autobús actualizado
-        router.push('/crud/read');
+        router.push('/crud/bus/read');
       } else {
         console.error('Error al actualizar el autobús.');
       }

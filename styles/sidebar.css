@@ -1,0 +1,68 @@
+/* Estilo para el fondo del sidebar */
+.sidebar {
+    background-color: #1E1E1E; /* Gris oscuro */
+    color: #FFFFFF; /* Blanco */
+  }
+  
+  /* Estilo para el efecto hover */
+  .hovered {
+    background-color: #FF6B6B; /* Rojo coral al pasar el cursor */
+    color: #FFFFFF; /* Blanco */
+  }
+  
+  /* Estilo para el fondo de las subopciones en el sidebar */
+
+  /* Añade este CSS personalizado en tu archivo de estilos CSS */
+.nav-link .mr-icon {
+    margin-right: 15px; /* Ajusta el valor de margen según tus preferencias */
+    padding-left: 1%;
+  }
+
+
+
+/* Estilos para cada fila de asientos */
+.seat-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.seat {
+  width: 50px;
+  height: 50px;
+  background-color: #ccc;
+  margin: 5px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+.seat.selected {
+  background-color: #007bff; /* Cambia el color de fondo del asiento seleccionado */
+  color: white; /* Cambia el color del texto del asiento seleccionado */
+}
+
+.selected-seat {
+  margin-top: 20px;
+}
+
+.separate {
+  margin-right: 10px; /* Cambiamos margin-right por margin-left para separar la tercera columna */
+}
+
+.material-icons {
+  font-size: 14px;
+}
+
+.bus {
+  background-color: #eaebe7;
+  padding: 20px;
+  border: 2px solid #333;
+  border-radius: 10px;
+  width: 250px;
+  margin: 0 auto;
+}
+.bus-seating {
+  text-align: center;
+}

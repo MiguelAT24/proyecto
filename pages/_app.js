@@ -1,4 +1,4 @@
-import dynamic from 'next/dynamic';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Layout from '../components/Layout';
 

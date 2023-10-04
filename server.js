@@ -1,49 +1,39 @@
-// server.js
-import express from 'express';
-import next from 'next';
-import session from 'express-session';
-import cookieParser from 'cookie-parser';
-import { findUserByUsername, validatePassword } from './lib/auth';
+const express = require('express');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const mysql = require('mysql');
 
-const dev = process.env.NODE_ENV !== 'production';
-const app = next({ dev });
-const handle = app.getRequestHandler();
+const app = express();
 
-app.prepare().then(() => {
-  const server = express();
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'tu_usuario_mysql',
+    password: 'tu_contraseña_mysql',
+    database: 'tu_base_de_datos'
+});
 
-  server.use(cookieParser());
-  server.use(session({ secret: 'mi_secreto', resave: false, saveUninitialized: true }));
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
+app.use(session({
+    secret: 'tu_secreto_secreto',
+    resave: true,
+    saveUninitialized: true
+}));
 
-  server.use(express.json());
-  server.use(express.urlencoded({ extended: true }));
+// Rutas para el inicio de sesión y cierre de sesión
+app.post('/login', (req, res) => {
+    // Aquí verifica las credenciales del usuario en la base de datos
+    // Si son válidas, establece la sesión
+});
 
-  server.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-    const user = await findUserByUsername(username);
+app.get('/logout', (req, res) => {
+    // Termina la sesión y borra las cookies
+});
 
-    if (!user) {
-      return res.status(401).json({ message: 'Usuario no encontrado' });
-    }
+// Otras rutas y middleware para tu aplicación
 
-    const isValid = await validatePassword(password, user.password);
-
-    if (!isValid) {
-      return res.status(401).json({ message: 'Contraseña incorrecta' });
-    }
-   
-
-    req.session.user = user;
-
-    res.status(200).json({ message: 'Inicio de sesión exitoso' });
-  });
-
-  server.get('*', (req, res) => {
-    return handle(req, res);
-  });
-
-  server.listen(3000, (err) => {
-    if (err) throw err;
-    console.log('> Listo en http://localhost:3000');
-  });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
 });

@@ -1,32 +1,50 @@
 // pages/api/logout.js
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { verify } from "jsonwebtoken";
+import { serialize } from "swr/_internal";
 
-export default async function handler(req, res) {
-    if (req.method === 'POST') {
-      try {
-        // Verifica si req.session está definida
-        if (!req.session) {
-          console.error('Sesión no inicializada');
-          return res.status(500).json({ message: 'Error al cerrar la sesión' });
-        }
-  
-        // Destruye la sesión del usuario
-        req.session.destroy((err) => {
-          if (err) {
-            console.error('Error al cerrar la sesión:', err);
-            return res.status(500).json({ message: 'Error al cerrar la sesión' });
-          }
-  
-          // Responde con un mensaje de cierre de sesión exitoso
-          console.log('Cierre de sesión exitoso');
-          return res.status(200).json({ message: 'Cierre de sesión exitoso' });
-        });
-      } catch (error) {
-        console.error('Error al cerrar la sesión:', error);
-        return res.status(500).json({ message: 'Error al cerrar la sesión' });
+export default function handler(req, res) {
+  const { myTokenName } = req.cookies;
+
+  if (!myTokenName) {
+    return NextResponse.json(
+      {
+        message: "Not logged in",
+      },
+      {
+        status: 401,
       }
-    } else {
-      // Si la solicitud no es un método POST, responder con un error 405 (Método no permitido)
-      return res.status(405).end();
-    }
+    );
   }
-  
+
+  try {
+    verify(myTokenName, "secret");
+
+    const serialized = serialize("myTokenName", null, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      path: "/",
+    });
+
+    // Elimina la cookie estableciendo su valor como una cadena vacía y una fecha de expiración pasada
+    res.setHeader(
+      "Set-Cookie",
+      `myTokenName=; HttpOnly; Secure; SameSite=Strict; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/`
+    );
+
+    // Envía una respuesta al cliente
+    return res.status(200).json({
+      message: "Logout successful",
+    });
+  } catch (error) {
+    // Manejar errores si es necesario
+
+    // Envía una respuesta de error al cliente
+    return res.status(500).json({
+      message: "Error during logout",
+    });
+  }
+}

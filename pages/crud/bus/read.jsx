@@ -45,7 +45,7 @@ export default function BusList() {
         <div className="container">
       
         <h1 className="my-5">Listas de Buses</h1>
-        <Link  legacyBehavior href="/crud/create">
+        <Link  legacyBehavior href="/crud/bus/create">
           <a className="btn btn-primary mb-3">Agregar Nuevo Bus</a>
         </Link>
         {/* Resto de tu código */}
@@ -80,7 +80,7 @@ export default function BusList() {
                   <td>{bus.tip_bus}</td>
                   <td>{bus.adicional}</td>
                   <td>
-                  <Link legacyBehavior href={`/crud/edit/${bus.id}`}>
+                  <Link legacyBehavior href={`/crud/bus/edit/${bus.id}`}>
                         <a className="btn btn-primary btn-sm mx-2">Editar</a>
                       </Link>
                       <button
