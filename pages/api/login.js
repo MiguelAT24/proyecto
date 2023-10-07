@@ -3,6 +3,7 @@
 import { sign } from "jsonwebtoken";
 import { findUserByUsername, validatePassword } from '../../lib/auth';
 
+
 export default async function handler(request, response) {
   if (request.method === "POST") {
     const { username, password } = await request.body;

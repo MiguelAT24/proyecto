@@ -64,13 +64,13 @@ export default function EditBus() {
   
   return (
     <div className="container">
-      <h1 className="my-4">Editar Autobús</h1>
+      <h1 className="my-4">Editar Ruta</h1>
       {errorFromSWR && <p>Error al obtener los datos del servidor.</p>}
       {!errorFromSWR && formDataFromSWR && (
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="nombre" className="form-label">
-              Nombre del Autobús:
+              Nombre de la ruta:
             </label>
             <input
               type="text"

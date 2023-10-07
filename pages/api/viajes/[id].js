@@ -8,7 +8,7 @@ export default async function handler(req, res) {
       // Obtener un viaje por su ID
       try {
         const connection = await connectToDatabase();
-        const [viajes] = await connection.query('SELECT * FROM programacion_viajes WHERE id = ?', [id]);
+        const [viajes] = await connection.query('SELECT * FROM viajes WHERE id = ?', [id]);
         connection.end();
 
         if (viajes.length > 0) {
@@ -27,29 +27,30 @@ export default async function handler(req, res) {
         const connection = await connectToDatabase();
         const {
           fecha,
-          hora_salida,
-          hora_llegada,
+          horaSalida,
+          horaLlegada,
+          ruta,
+          bus,
           origen,
           destino,
-          bus,
-          chofer,
+          servicio,
+          precio,
           id,
         } = req.body;
 
-        const updateQuery = `
-          UPDATE programacion_viajes
-          SET fecha = ?, hora_salida = ?, hora_llegada = ?, origen = ?, destino = ?, bus = ?, chofer = ?
+        const updateQuery = `UPDATE viajes SET fecha = ?, hor_sa = ?, ho_lle = ?, ruta = ?, origen = ?, destino = ?, bus = ?, servicio = ?, precio = ?
           WHERE id = ?`;
 
         const [result] = await connection.query(updateQuery, [
           fecha,
-          hora_salida,
-          hora_llegada,
+          horaSalida,
+          horaLlegada,
+          ruta,
+          bus,
           origen,
           destino,
-          bus,
-          chofer,
-          id, // Mantén el valor original de id sin cambios
+          servicio,
+          precio,
         ]);
 
         connection.end();
@@ -70,7 +71,7 @@ export default async function handler(req, res) {
     case 'DELETE': // Agrega este caso para eliminar un viaje
       try {
         const connection = await connectToDatabase();
-        const [result] = await connection.query('DELETE FROM programacion_viajes WHERE id = ?', [id]);
+        const [result] = await connection.query('DELETE FROM viajes WHERE id = ?', [id]);
         connection.end();
 
         if (result.affectedRows > 0) {
@@ -94,7 +95,7 @@ async function getViajeById(id) {
   const connection = await connectToDatabase();
 
   try {
-    const [viaje] = await connection.query('SELECT * FROM programacion_viajes WHERE id = ?', [id]);
+    const [viaje] = await connection.query('SELECT * FROM viajes WHERE id = ?', [id]);
     return viaje[0];
   } catch (error) {
     throw error;
