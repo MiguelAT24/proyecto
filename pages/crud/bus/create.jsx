@@ -29,7 +29,7 @@ const CrearPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/products', {
+      const response = await fetch('/api/bus', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

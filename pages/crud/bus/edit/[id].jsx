@@ -13,7 +13,7 @@ const fetcher = async (url) => {
 export default function EditBus() {
   const router = useRouter();
   const { id } = router.query;
-  const { data: formDataFromSWR, error: errorFromSWR } = useSWR(`/api/products/${id}`, fetcher);
+  const { data: formDataFromSWR, error: errorFromSWR } = useSWR(`/api/bus/${id}`, fetcher);
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -45,7 +45,7 @@ export default function EditBus() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`/api/bus/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

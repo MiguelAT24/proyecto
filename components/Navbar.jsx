@@ -115,7 +115,6 @@ const SideNavbar = () => {
           suboptions={[
             { label: '  Agregar Bus', link: '/crud/bus/create', icon: faBus },
             { label: '  Ver Buses', link: '/crud/bus/read', icon: faList },
-            { label: '  Tipo de Bus', link: '/crud/bus/tipo', icon: faBusAlt },
             { label: '  Asignar Bus', link: '/crud/bus/asignar', icon: faUser },
           ]}
         />

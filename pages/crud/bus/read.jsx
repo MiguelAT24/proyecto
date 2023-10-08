@@ -13,17 +13,17 @@ const fetcher = async (url) => {
 };
 
 export default function BusList() {
-  const { data: products, error } = useSWR('/api/products', fetcher);
+  const { data: products, error } = useSWR('/api/bus', fetcher);
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`/api/bus/${id}`, {
         method: 'DELETE',
       });
 
       if (response.status === 200) {
         // Actualiza la lista de productos después de eliminar
-        mutate('/api/products');
+        mutate('/api/bus');
       } else {
         console.error('Error al eliminar el producto.');
       }

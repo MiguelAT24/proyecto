@@ -75,7 +75,7 @@ const AsignarBus = () => {
 
     const fetchBuses = async () => {
       try {
-        const response = await fetch('/api/products'); // Reemplaza '/api/buses' con la URL correcta de tu API de buses
+        const response = await fetch('/api/bus'); // Reemplaza '/api/buses' con la URL correcta de tu API de buses
         if (response.status === 200) {
           const data = await response.json();
           setBuses(data);

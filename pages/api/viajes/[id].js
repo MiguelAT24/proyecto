@@ -25,20 +25,9 @@ export default async function handler(req, res) {
       // Actualizar un viaje por su ID
       try {
         const connection = await connectToDatabase();
-        const {
-          fecha,
-          horaSalida,
-          horaLlegada,
-          ruta,
-          bus,
-          origen,
-          destino,
-          servicio,
-          precio,
-          id,
-        } = req.body;
+        const {fecha,horaSalida,horaLlegada,ruta,origen,destino,bus,servicio,precio,} = req.body;
 
-        const updateQuery = `UPDATE viajes SET fecha = ?, hor_sa = ?, ho_lle = ?, ruta = ?, origen = ?, destino = ?, bus = ?, servicio = ?, precio = ?
+        const updateQuery = `UPDATE viajes SET fecha = ?, ho_sa = ?, ho_lle = ?, ruta = ?, origen = ?, destino = ?, bus = ?, servicio = ?, precio = ?
           WHERE id = ?`;
 
         const [result] = await connection.query(updateQuery, [
@@ -46,11 +35,12 @@ export default async function handler(req, res) {
           horaSalida,
           horaLlegada,
           ruta,
-          bus,
           origen,
           destino,
+          bus,
           servicio,
           precio,
+          id,
         ]);
 
         connection.end();

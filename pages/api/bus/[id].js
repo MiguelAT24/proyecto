@@ -8,7 +8,7 @@ export default async function handler(req, res) {
       // Obtener un producto por su ID
       try {
         const connection = await connectToDatabase();
-        const [products] = await connection.query('SELECT * FROM products WHERE id = ?', [id]);
+        const [products] = await connection.query('SELECT * FROM bus WHERE id = ?', [id]);
         connection.end();
 
         if (products.length > 0) {
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
         const connection = await connectToDatabase();
         const { nombre, id, marca, modelo, placa, asientos, capacidad, tipo_bus, adicional } = req.body;
        const updateQuery = `
-        UPDATE products
+        UPDATE bus
         SET nombre = ?, marca = ?, modelo = ?, placa = ?, asientos = ?, capacidad = ?, tip_bus = ?, adicional = ?
         WHERE id = ?`;
         const [result] = await connection.query(updateQuery, [
@@ -84,7 +84,7 @@ async function getProductById(id) {
   const connection = await connectToDatabase();
 
   try {
-    const [product] = await connection.query('SELECT * FROM products WHERE id = ?', [id]);
+    const [product] = await connection.query('SELECT * FROM bus WHERE id = ?', [id]);
     return product[0];
   } catch (error) {
     throw error;

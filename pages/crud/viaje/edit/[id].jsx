@@ -105,14 +105,15 @@ export default function EditViaje() {
         body: JSON.stringify(formData),
       });
      
-      if (response.status === 200) {
-        // Redirige al usuario a la página de detalles de la programación de viaje actualizada
-        router.push('/Dashboard');
-      } else {
-        console.error('Error al actualizar la programación de viaje.');
+      if (!response.ok) {
+        throw new Error('Error al actualizar la programación de viaje.');
       }
+  
+      // Si llegamos aquí, la solicitud se realizó con éxito
+      // Redirige al usuario a la página de detalles de la programación de viaje actualizada
+      router.push('/crud/viaje/read');
     } catch (error) {
-      console.error('Error de red:', error);
+      console.error('Error al actualizar la programación de viaje:', error);
     }
   };
 

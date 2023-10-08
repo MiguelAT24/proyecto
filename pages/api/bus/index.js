@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     // Obtener la lista de autobuses
     try {
       const connection = await connectToDatabase();
-      const [products] = await connection.query('SELECT * FROM products');
+      const [products] = await connection.query('SELECT * FROM bus');
       connection.end();
       res.status(200).json(products);
     } catch (error) {
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
       const connection = await connectToDatabase();
       const [result] = await connection.query(
-        'INSERT INTO products (nombre, id, marca, modelo, placa, asientos, capacidad, tip_bus, adicional) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO bus (nombre, id, marca, modelo, placa, asientos, capacidad, tip_bus, adicional) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [nombre, identificacion, marca, modelo, placa, asiento, capacidad, tipo_bus, notas]
       );
       connection.end();
