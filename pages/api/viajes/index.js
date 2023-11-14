@@ -11,7 +11,8 @@ export default async function handler(req, res) {
     } catch (error) {
       res.status(500).json({ error: 'Error al obtener la lista de viajes.' });
     }
-  } else if (req.method === 'POST') {
+  } 
+  else if (req.method === 'POST') {
     // Crear un nuevo registro de viaje
     try {
       const {

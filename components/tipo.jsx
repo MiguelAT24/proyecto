@@ -9,8 +9,8 @@ const Leito = ({ onAsientoSeleccionado, seatsPerRow, totalSeats, specialSeats })
     const [selectedSeat, setSelectedSeat] = useState(null);
 
   const handleSeatClick = (seatNumber) => {
-    setSelectedSeat(seatNumber);
-    onAsientoSeleccionado(seatNumber);
+    setSelectedSeat({ numero: seatNumber, estado: 'libre' });
+    onAsientoSeleccionado({ numero: seatNumber, estado: 'libre' });
   };
 
   const renderSeats = () => {
@@ -78,7 +78,7 @@ const Leito = ({ onAsientoSeleccionado, seatsPerRow, totalSeats, specialSeats })
       </div>
       {selectedSeat && (
         <div className="selected-seat">
-          <p>Asiento seleccionado: {selectedSeat}</p>
+          <p>Asiento seleccionado:  {selectedSeat.numero}</p>
         </div>
       )}
     </div>

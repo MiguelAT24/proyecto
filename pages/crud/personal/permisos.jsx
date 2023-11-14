@@ -1,55 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// Importa los iconos necesarios (asegúrate de tener los íconos de FontAwesome importados)
 import { faShoppingCart, faBook, faBus, faList, faBusAlt, faRoute, faMap, faCalendar, faUser, faUserCog, faLock, faChartBar, faCog } from '@fortawesome/free-solid-svg-icons';
 
-const SeleccionarRolYPermisos = () => {
+const AsignarPermisosAUsuario = () => {
   const router = useRouter();
-  const [rolSeleccionado, setRolSeleccionado] = useState('');
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState('');
   const [permisosSeleccionados, setPermisosSeleccionados] = useState([]);
-
-  const opcionesRoles = [
-    'Administrador',
-    'Vendedor',
-    'Conductor',
-    'Pasajero',
-  ];
+  const [usuarios, setUsuarios] = useState([]);
 
   const opcionesPermisos = [
     {
       title: 'Gestión de Ventas',
       suboptions: [
-        { label: 'Realizar Venta de Pasaje', value: 'realizar-venta', icon: faShoppingCart },
-        { label: 'Reservar Pasaje', value: 'reservar-pasaje', icon: faBook },
+        { label: 'Realizar Venta', value: 'realizar venta', icon: faShoppingCart },
+        { label: 'Reservar Pasaje', value: 'reservar pasaje', icon: faBook },
       ],
     },
     {
       title: 'Gestión de Buses',
       suboptions: [
-        { label: 'Agregar Bus', value: 'agregar-bus', icon: faBus },
-        { label: 'Ver Buses', value: 'ver-buses', icon: faList },
-        { label: 'Tipo de Bus', value: 'tipo-de-bus', icon: faBusAlt },
+        { label: 'Agregar Bus', value: 'agregar bus', icon: faBus },
+        { label: 'Ver Buses', value: 'ver buses', icon: faList },
+        { label: 'Tipo de Bus', value: 'asignar bus', icon: faBusAlt },
       ],
     },
     {
       title: 'Gestión de Rutas',
       suboptions: [
-        { label: 'Agregar Ruta', value: 'agregar-ruta', icon: faRoute },
-        { label: 'Ver Rutas', value: 'ver-rutas', icon: faMap },
+        { label: 'Agregar Ruta', value: 'agregar ruta', icon: faRoute },
+        { label: 'Ver Rutas', value: 'ver rutas', icon: faMap },
       ],
     },
     {
       title: 'Programación de Viajes',
       suboptions: [
-        { label: 'Agregar Viaje', value: 'agregar-viaje', icon: faCalendar },
-        { label: 'Ver Viajes', value: 'ver-viajes', icon: faList },
+        { label: 'Agregar Viaje', value: 'agregar viaje', icon: faCalendar },
+        { label: 'Ver Viajes', value: 'ver viajes', icon: faList },
       ],
     },
     {
       title: 'Gestión de Personal',
       suboptions: [
-        { label: 'Agregar Personal', value: 'agregar-personal', icon: faUser },
+        { label: 'Agregar Personal', value: 'agregar personal', icon: faUser },
         { label: 'Perfiles', value: 'perfiles', icon: faUserCog },
         { label: 'Permisos', value: 'permisos', icon: faLock },
       ],
@@ -57,21 +50,30 @@ const SeleccionarRolYPermisos = () => {
     {
       title: 'Reportes y Estadísticas',
       suboptions: [
-        { label: 'Generar Reportes', value: 'generar-reportes', icon: faChartBar },
-        { label: 'Ver Estadísticas', value: 'ver-estadisticas', icon: faChartBar },
+        { label: 'Generar Reportes', value: 'generar reportes', icon: faChartBar },
+        { label: 'Ver Estadísticas', value: 'ver estadisticas', icon: faChartBar },
       ],
     },
-    {
-      title: 'Configuración y Seguridad',
-      suboptions: [
-        { label: 'Configuración General', value: 'configuracion-general', icon: faCog },
-        { label: 'Seguridad', value: 'seguridad', icon: faCog },
-      ],
-    },
+   
   ];
 
-  const handleRolChange = (e) => {
-    setRolSeleccionado(e.target.value);
+  useEffect(() => {
+    // En este efecto, obtendremos la lista de usuarios desde tu API o base de datos.
+    // Supongamos que obtienes la lista de usuarios y la almacenas en un array llamado usuarios.
+
+    // Ejemplo de cómo podrías obtener los usuarios desde una API ficticia:
+    fetch('/api/personal')
+      .then((response) => response.json())
+      .then((data) => {
+        setUsuarios(data); // Almacena la lista de usuarios en el estado.
+      })
+      .catch((error) => {
+        console.error('Error al obtener usuarios:', error);
+      });
+  }, []); // Este efecto se ejecutará una vez al cargar el componente.
+
+  const handleUsuarioChange = (e) => {
+    setUsuarioSeleccionado(e.target.value);
   };
 
   const handlePermisoChange = (e) => {
@@ -93,9 +95,9 @@ const SeleccionarRolYPermisos = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ rol: rolSeleccionado, permisos: permisosSeleccionados }),
+        body: JSON.stringify({ usuario: usuarioSeleccionado, permisos: permisosSeleccionados }),
       });
-  
+
       if (response.ok) {
         // Los permisos se asignaron correctamente, puedes redirigir al usuario a una página de confirmación o al panel de control.
         router.push('/dashboard');
@@ -107,27 +109,26 @@ const SeleccionarRolYPermisos = () => {
       console.error('Error de red:', error);
     }
   };
-  
 
   return (
     <div className="container">
-      <h1 className="mt-5">Asignar Permisos a un Rol de Usuario</h1>
+      <h1 className="mt-5">Asignar Permisos a un Usuario</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group mt-4">
-          <label htmlFor="rol">Seleccionar Rol:</label>
+          <label htmlFor="usuario">Seleccionar Usuario:</label>
           <select
             className="form-control"
-            id="rol"
-            name="rol"
-            value={rolSeleccionado}
-            onChange={handleRolChange}
+            id="usuario"
+            name="usuario"
+            value={usuarioSeleccionado}
+            onChange={handleUsuarioChange}
             required
           >
-            <option value="">Seleccionar un Rol</option>
-            {opcionesRoles.map((opcion) => (
-              <option key={opcion} value={opcion}>
-                {opcion}
-              </option>
+            <option value="">Seleccionar un Usuario</option>
+            {usuarios.map((usuario) => (
+              <option key={usuario.id} value={usuario.id}>
+              {usuario.nombre}-{usuario.rol}
+            </option>
             ))}
           </select>
         </div>
@@ -163,4 +164,4 @@ const SeleccionarRolYPermisos = () => {
   );
 };
 
-export default SeleccionarRolYPermisos;
+export default AsignarPermisosAUsuario;

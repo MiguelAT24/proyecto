@@ -12,9 +12,10 @@ const AgregarPersonal = () => {
     telefono: '',
     direccion: '',
     dni: '', // Nuevo campo: DNI
-    fechaNacimiento: '', // Nuevo campo: Fecha de nacimiento
     ciudad: '', // Nuevo campo: Ciudad
     pais: '', // Nuevo campo: País
+    user: '',
+    password: '',
   });
 
   const [roles, setRoles] = useState([]); // Estado para almacenar los roles
@@ -27,9 +28,10 @@ const AgregarPersonal = () => {
     telefono,
     direccion,
     dni,
-    fechaNacimiento,
     ciudad,
     pais,
+    user,
+    password,
   } = formData;
 
   const handleChange = (e) => {
@@ -87,110 +89,26 @@ const AgregarPersonal = () => {
     <div className="container">
       <h1 className="mt-5">Agregar Personal</h1>
       <form onSubmit={handleSubmit}>
-        <div className="form-group mt-4">
-          <label htmlFor="nombre">Nombre:</label>
+        <div className="form-group">
+          <label htmlFor="pais">Usuario:</label>
           <input
             type="text"
             className="form-control"
-            id="nombre"
-            name="nombre"
-            value={nombre}
+            id="user"
+            name="user"
+            value={user}
             onChange={handleChange}
             required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="apellido">Apellido:</label>
+          <label htmlFor="pais">Password:</label>
           <input
             type="text"
             className="form-control"
-            id="apellido"
-            name="apellido"
-            value={apellido}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="correo">Correo:</label>
-          <input
-            type="email"
-            className="form-control"
-            id="correo"
-            name="correo"
-            value={correo}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="telefono">Teléfono:</label>
-          <input
-            type="text"
-            className="form-control"
-            id="telefono"
-            name="telefono"
-            value={telefono}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="direccion">Dirección:</label>
-          <input
-            type="text"
-            className="form-control"
-            id="direccion"
-            name="direccion"
-            value={direccion}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="dni">DNI:</label>
-          <input
-            type="text"
-            className="form-control"
-            id="dni"
-            name="dni"
-            value={dni}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="fechaNacimiento">Fecha de Nacimiento:</label>
-          <input
-            type="date"
-            className="form-control"
-            id="fechaNacimiento"
-            name="fechaNacimiento"
-            value={fechaNacimiento}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="ciudad">Ciudad:</label>
-          <input
-            type="text"
-            className="form-control"
-            id="ciudad"
-            name="ciudad"
-            value={ciudad}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="pais">País:</label>
-          <input
-            type="text"
-            className="form-control"
-            id="pais"
-            name="pais"
-            value={pais}
+            id="password"
+            name="password"
+            value={password}
             onChange={handleChange}
             required
           />

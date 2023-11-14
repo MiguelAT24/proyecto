@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Leito from '../../../components/tipo.jsx';
 import { useRouter } from 'next/router';
+import _ from 'lodash';
+import '/styles/styles.css';
+import { verificarPermiso } from '../utilidades.js';
 
 const generarSerieUnica = () => {
     return `S-${Math.floor(Math.random() * 10000)}`;
@@ -10,32 +13,39 @@ const generarSerieUnica = () => {
 
 const VentaPasajes = () => {
   const router = useRouter();
-  const [user, setUser] = useState({
-    username: "",
-  });
-  const [mostrarFormularioVenta, setMostrarFormularioVenta] = useState(false);
 
-
-  const [showMapaLeito, setShowMapaLeito] = useState(false);
   const [nombre, setNombre] = useState('');
   const [cedulaIdentidad, setCedulaIdentidad] = useState('');
   const [origen, setOrigen] = useState('');
   const [destino, setDestino] = useState('');
   const [fecha, setFecha] = useState('');
   const [serie, setSerie] = useState(generarSerieUnica());
-
   const [usuarioAutenticado, setUsuarioAutenticado] = useState(null);
-
-  
-const [estadoAsiento, setEstadoAsiento] = useState('');
-const [precio, setPrecio] = useState('');
-const [vendidoPor, setVendidoPor] = useState(usuarioAutenticado || '');
+  const [estadoAsiento, setEstadoAsiento] = useState('');
+  const [precio, setPrecio] = useState('');
 
   const [viajeSeleccionado, setViajeSeleccionado] = useState(null);
   const [asientoSeleccionado, setAsientoSeleccionado] = useState(null);
- 
+  const [mostrarFormularioVenta, setMostrarFormularioVenta] = useState(false);
+
   // Define una lista de viajes disponibles
   const [viajesDisponibles, setViajesDisponibles] = useState([]);
+  // Verifica si el usuario es administrador
+  const esAdministrador = usuarioAutenticado && usuarioAutenticado.role === 'administrador';
+  
+  // Verifica los permisos
+  useEffect(() => {
+    if (esAdministrador) {
+      // Si es administrador, no es necesario verificar permisos específicos
+      return;
+    }
+
+    // Verifica si el usuario tiene el permiso para acceder a esta página.
+    if (!verificarPermiso(usuarioAutenticado, 'realizar-venta')) {
+      // Si no tiene el permiso, redirige a una página de error o muestra un mensaje de acceso denegado.
+      router.replace('/Login'); // Utiliza router.replace en lugar de router.push
+    }
+  }, [usuarioAutenticado, esAdministrador]);
 
   const handleSeleccionarViaje = (event) => {
     const selectedId = parseInt(event.target.value);
@@ -48,12 +58,6 @@ const [vendidoPor, setVendidoPor] = useState(usuarioAutenticado || '');
       setDestino(selectedViaje.destino);
       setFecha(selectedViaje.fecha);
     }
-
-    if (selectedViaje && selectedViaje.servicio === 'Leito') {
-      setShowMapaLeito(true);
-    } else {
-      setShowMapaLeito(false);
-    }
   };
   
 
@@ -63,35 +67,69 @@ const [vendidoPor, setVendidoPor] = useState(usuarioAutenticado || '');
       // Muestra un mensaje de error o notificación al usuario
       alert('Este asiento ya ha sido vendido.');
     } else {
-      setAsientoSeleccionado(asiento);
+      setAsientoSeleccionado({ ...asiento, numero: asiento.numero });
       setSerie(generarSerieUnica());
       // Aquí debes asegurarte de establecer mostrarFormularioVenta en true
       setMostrarFormularioVenta(true);  // Mostrar el formulario al seleccionar un asiento
     }
   };
-
+   
+  const renderAsientos = () => {
+    if (viajeSeleccionado && viajeSeleccionado.asientos) {
+      return (
+        <div className="mb-3">
+          <h3>Asientos Disponibles:</h3>
+          <div className="d-flex flex-wrap">
+            {viajeSeleccionado.asientos.map((asiento) => (
+              <button
+                key={asiento.numero}
+                className={`asiento ${asiento.estado === 'vendido' ? 'vendido' : asiento.estado === 'ocupado' ? 'ocupado' : 'libre'}`}
+                onClick={() => handleAsientoSeleccionado(asiento)}
+              >
+                {asiento.numero}
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+  };
   const handleSubmit = async (e) => {
-    e.preventDefault();
     try {
       if (asientoSeleccionado.estado === 'vendido') {
         // Muestra un mensaje de error o notificación al usuario
         alert('Este asiento ya ha sido vendido.');
       } else {
+        const asientoSeleccionadoCopia = _.cloneDeep(asientoSeleccionado);
+
         const response = await axios.post('/api/ventas', {
         nombre,
         cedulaIdentidad,
         origen,
         destino,
         fecha,
-        asientoSeleccionado,
+        asientoSeleccionado: asientoSeleccionadoCopia,
         serie,
         precio,
-        vendidoPor,
+        vendidoPor: usuarioAutenticado,
+        viaje_id: viajeSeleccionado.id,
       });
       if (response.status === 201) {
+        
         // Venta de asiento registrada con éxito, puedes redirigir al usuario a la página de detalles de la venta
         // Por ejemplo, router.push('/venta-detalles/' + nuevaVentaId);
+        const numeroAsientoVendido = asientoSeleccionado.numero;
+        const asientosActualizados = viajeSeleccionado.asientos.map((asiento) => {
+          if (asiento.numero === numeroAsientoVendido) {
+            asiento.estado = 'vendido';
+          }
+          return asiento;
+        });
+
+        // Actualiza el estado del viaje seleccionado
+        setViajeSeleccionado({ ...viajeSeleccionado, asientos: asientosActualizados });
         router.push('/Dashboard');
+        e.preventDefault();
       } else {
         // Manejar errores de registro de venta de asiento
         console.error('Error al registrar la venta de asiento.');
@@ -107,6 +145,7 @@ const [vendidoPor, setVendidoPor] = useState(usuarioAutenticado || '');
     setSerie(generarSerieUnica());
   }, []);
 
+
   useEffect(() => {
     // Realiza una solicitud al servidor para obtener la lista de viajes
     axios.get('/api/viajes') // Ajusta la URL según tu estructura de rutas en el servidor
@@ -121,25 +160,24 @@ const [vendidoPor, setVendidoPor] = useState(usuarioAutenticado || '');
       });
   }, []);
 
+
   useEffect(() => {
+   
     // Realiza una solicitud al servidor para obtener la información del usuario autenticado
     axios.get('/api/profile') // Ajusta la URL según tu estructura de rutas en el servidor
       .then((response) => {
         // Comprueba si la respuesta contiene la información del usuario autenticado
         if (response.data && response.data.username) {
           setUsuarioAutenticado(response.data.username);
-          setVendidoPor(response.data.username);
         } else {
           // El usuario no está autenticado
           setUsuarioAutenticado(null);
-          setVendidoPor('');
         }
       })
       .catch((error) => {
         console.error(error);
         // Maneja errores de solicitud
         setUsuarioAutenticado(null);
-        setVendidoPor('');
       });
   }, []);
 
@@ -167,8 +205,8 @@ const [vendidoPor, setVendidoPor] = useState(usuarioAutenticado || '');
               ))}
             </select>
           </div>
+          {renderAsientos()}
         </div>
-        {/* Contenedor de la derecha para mostrar información y mapa de asientos */}
         <div className="col-md-4">
           {viajeSeleccionado && (
             <div>
@@ -180,24 +218,23 @@ const [vendidoPor, setVendidoPor] = useState(usuarioAutenticado || '');
           )}
         </div>
         <div className="col-md-4">
-          {showMapaLeito && (
-            <div>
-              <h3>Mapa de Asientos - Leito:</h3>
-              <Leito  seatsPerRow={3}
-                totalSeats={29}
-                specialSeats={[6, 30]}
-                onAsientoSeleccionado={(seatNumber) => handleAsientoSeleccionado(seatNumber)}/>
-              <button
-                className="btn btn-primary mt-2"
-                onClick={() => setMostrarFormularioVenta(true)}
-              >
-                Comprar Asiento
-              </button>
-            </div>
-          )}
+          {viajeSeleccionado && viajeSeleccionado.servicio === 'Leito' && (
+              <div>
+                <h3>Mapa de Asientos - Leito:</h3>
+                <Leito  seatsPerRow={3}
+                  totalSeats={29}
+                  specialSeats={[6, 30]}
+                  onAsientoSeleccionado={handleAsientoSeleccionado}/>
+                <button
+                  className="btn btn-primary mt-2"
+                  onClick={() => setMostrarFormularioVenta(true)}
+                >
+                  Comprar Asiento
+                </button>
+              </div>
+            )}
         </div>
       </div>
-      {/* Contenedor de abajo para el formulario de venta */}
       {asientoSeleccionado && mostrarFormularioVenta && (
 
 <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block', background: 'rgba(0,0,0,0.5)' }}>
@@ -315,7 +352,7 @@ const [vendidoPor, setVendidoPor] = useState(usuarioAutenticado || '');
                     type="text"
                     className="form-control"
                     id="asiento"
-                    value={asientoSeleccionado || ''}
+                    value={asientoSeleccionado ? asientoSeleccionado.numero : ''}
                     readOnly // Para hacerlo solo de lectura
                   />
                 </div>
@@ -348,7 +385,6 @@ const [vendidoPor, setVendidoPor] = useState(usuarioAutenticado || '');
                 </div>
               </div>
         
-          {/* Resto del formulario */}
           <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setMostrarFormularioVenta(false)}>Cerrar</button>
                 <button type="submit" className="btn btn-primary" name="registro">REGISTRAR</button>

@@ -1,19 +1,18 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { useGlobalContext } from '../GlobalContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '/styles/sidebar.css';
 import {
   faBus,
   faList,
-  faBusAlt,
   faRoute,
   faMap,
   faCalendar,
   faUser,
   faChartBar,
-  faCog,
   faSignOutAlt,
   faHome,
   faShoppingCart,
@@ -24,11 +23,22 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 const OptionWithSuboptions = ({ title, suboptions }) => {
-  const [showSubOptions, setShowSubOptions] = useState(false);
+  const { userPermissions, updatePermissions } = useGlobalContext();
+  const [showSubOptions, setShowSubOptions] = useState(userPermissions.includes(title));
 
   const toggleSubOptions = () => {
-    setShowSubOptions(!showSubOptions);
+    const newShowSubOptions = !showSubOptions;
+    setShowSubOptions(newShowSubOptions);
+
+    // Actualizar el estado global de los permisos
+    const newPermissions = newShowSubOptions
+      ? [...userPermissions, title]
+      : userPermissions.filter((perm) => perm !== title);
+
+    updatePermissions(newPermissions);
   };
+
+  // Resto del código...
 
   const handleMouseEnter = (event) => {
     event.currentTarget.classList.add('hovered');
@@ -59,13 +69,14 @@ const OptionWithSuboptions = ({ title, suboptions }) => {
         aria-labelledby={`dropdown-${title}`}
       >
         {suboptions.map((suboption, index) => (
+          
           <li
             key={index}
             className="dropdown-submenu"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <Link legacyBehavior href={suboption.link}>
+            <Link legacyBehavior href={suboption.link} >
               <a className="dropdown-item">
                 <FontAwesomeIcon icon={suboption.icon} className="mr-icon" />
                 {suboption.label}
@@ -80,6 +91,15 @@ const OptionWithSuboptions = ({ title, suboptions }) => {
 
 const SideNavbar = () => {
   const router = useRouter();
+  const { userPermissions } = useGlobalContext();
+
+  const { query } = router;
+
+  const hasPermission = (permission) => {
+    // Verifica si userPermissions está definido, no es null y no es undefined
+    return userPermissions && userPermissions.includes(permission);
+  };
+
 
   const logout = async () => {
     try {
@@ -93,80 +113,92 @@ const SideNavbar = () => {
 
   return (
     <div className="sidebar bg-dark p-5">
-      
-      <ul className="navbar-nav py-5 px-1 ">
-        <Link legacyBehavior href="/Dashboard" className="navbar-brand">
-          <a className="nav-link style={{ color: '#ffff' }}">
+    <ul className="navbar-nav py-5 px-1 ">
+      <Link legacyBehavior href="/Dashboard" className="navbar-brand">
+        <a className="nav-link style={{ color: '#ffff' }}">
           <FontAwesomeIcon icon={faHome} className="mr-icon" />
-            Inicio
-          </a>
-        </Link>
-        <br />
-        <OptionWithSuboptions
-          title="Gestión de Ventas"
-          suboptions={[
-            { label: '  Realizar Venta de Pasaje', link: '/crud/ventas/create', icon: faShoppingCart },
-            { label: '  Reservar Pasaje', link: '/opcion3/subopcion2', icon: faBook },
-          ]}
-        />
-         <br />
-        <OptionWithSuboptions
-          title="Gestión de Buses"
-          suboptions={[
-            { label: '  Agregar Bus', link: '/crud/bus/create', icon: faBus },
-            { label: '  Ver Buses', link: '/crud/bus/read', icon: faList },
-            { label: '  Asignar Bus', link: '/crud/bus/asignar', icon: faUser },
-          ]}
-        />
-        <br />
-        <OptionWithSuboptions
-          title="Gestión de Rutas"
-          suboptions={[
-            { label: '  Agregar Ruta', link: '/crud/rutas/create', icon: faRoute },
-            { label: '  Ver Rutas', link: '/crud/rutas/read', icon: faMap },
-          ]}
-        />
-        <br />
-        <OptionWithSuboptions
-          title="Programación de Viajes"
-          suboptions={[
-            { label: '  Agregar Viaje', link: '/crud/viaje/create', icon: faCalendar },
-            { label: '  Ver Viajes', link: '/crud/viaje/read', icon: faList },
-          ]}
-        />
-        <br />
+          Inicio
+        </a>
+      </Link>
+      <br />
 
-        <OptionWithSuboptions
-          title="Gestión de Personal"
-          suboptions={[
-            { label: '  Agregar Personal', link: '/crud/personal/create', icon: faUser },
-            { label: '  Perfiles', link: '/crud/personal/rol', icon: faUserCog },
-            { label: '  Permisos', link: '/crud/personal/permisos', icon: faLock },
-          ]}
-        />
-        <br />
+        {/* Gestión de Ventas */}
+        {hasPermission('realizar venta') || hasPermission('reservar pasaje') ? (
+          <OptionWithSuboptions
+            title="Gestión de Ventas"
+            suboptions={[
+              { label: '  realizar venta', link: '/crud/ventas/create', icon: faShoppingCart },
+              { label: '  reservar pasaje', link: '/opcion3/subopcion2', icon: faBook },
+            ]}
+            query={query}
+          />
+        ) : null}
+        
+        {/* Gestión de Buses */}
+        {hasPermission('agregar bus') || hasPermission('ver buses') || hasPermission('asignar-bus') ? (
+          <OptionWithSuboptions
+            title="Gestión de Buses"
+            suboptions={[
+              { label: '  agregar bus', link: '/crud/bus/create', icon: faBus },
+              { label: '  ver buses', link: '/crud/bus/read', icon: faList },
+              { label: '  asignar bus', link: '/crud/bus/asignar', icon: faUser },
+            ]}
+            query={query}
+          />
+        ) : null}
 
-        <OptionWithSuboptions
-          title="Reportes y Estadísticas"
-          suboptions={[
-            { label: '  Generar Reportes', link: '/reportes/reporte', icon: faChartBar },
-            { label: '  Ver Estadísticas', link: '/reportes/estadistica', icon: faChartBar },
-          ]}
-        />
-         <br />
-        <Link legacyBehavior href="/config" className="navbar-brand">
-          <a className="nav-link style={{ color: '#ffff' }}">
-          <FontAwesomeIcon icon={faCog} className="mr-icon" />
-          Configuración General
-          </a>
-        </Link>
+        {/* Gestión de Rutas */}
+        {hasPermission('agregar ruta') || hasPermission('ver rutas') ? (
+          <OptionWithSuboptions
+            title="Gestión de Rutas"
+            suboptions={[
+              { label: '  agregar ruta', link: '/crud/rutas/create', icon: faRoute },
+              { label: '  ver rutas', link: '/crud/rutas/read', icon: faMap },
+            ]}
+          />
+        ) : null}
+
+        {/* Programación de Viajes */}
+        {hasPermission('agregar viaje') || hasPermission('ver viajes') ? (
+          <OptionWithSuboptions
+            title="Programación de Viajes"
+            suboptions={[
+              { label: '  agregar viaje', link: '/crud/viaje/create', icon: faCalendar },
+              { label: '  ver viajes', link: '/crud/viaje/read', icon: faList },
+            ]}
+          />
+        ) : null}
+
+        {/* Gestión de Personal */}
+        {hasPermission('agregar personal') || hasPermission('perfiles') || hasPermission('permisos') ? (
+          <OptionWithSuboptions
+            title="Gestión de Personal"
+            suboptions={[
+              { label: '  agregar personal', link: '/crud/personal/create', icon: faUser },
+              { label: '  perfiles', link: '/crud/personal/rol', icon: faUserCog },
+              { label: '  permisos', link: '/crud/personal/permisos', icon: faLock },
+            ]}
+          />
+        ) : null}
+
+        {/* Reportes y Estadísticas */}
+        {hasPermission('generar reportes') || hasPermission('ver estadisticas') ? (
+          <OptionWithSuboptions
+            title="Reportes y Estadísticas"
+            suboptions={[
+              { label: '  generar reportes', link: '/reportes/reporte', icon: faChartBar },
+              { label: '  ver estadísticas', link: '/reportes/estadistica', icon: faChartBar },
+            ]}
+          />
+        ) : null}
+
       </ul>
       <div className='container text-center p-4'>
-      <button onClick={logout} className="btn btn-info text-white btn-sm">
-        <FontAwesomeIcon icon={faSignOutAlt} className="mr-icon" />
-        Cerrar Sesión
-      </button>
-    </div>
+        <button onClick={logout} className="btn btn-info text-white btn-sm">
+          <FontAwesomeIcon icon={faSignOutAlt} className="mr-icon" />
+          Cerrar Sesión
+        </button>
+      </div>
     </div>
   );
 };

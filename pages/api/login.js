@@ -3,29 +3,29 @@
 import { sign } from "jsonwebtoken";
 import { findUserByUsername, validatePassword } from '../../lib/auth';
 
-
 export default async function handler(request, response) {
   if (request.method === "POST") {
-    const { username, password } = await request.body;
+    const { username, password} = await request.body;
 
     try {
       const user = await findUserByUsername(username);
 
       if (user && (await validatePassword(password, user.password))) {
         // Las credenciales son válidas
-        // Coloca tu lógica de generación de token aquí
 
-        const token = sign(
-          {
-            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
-            username,
-          },
-          "secret"
-        );
+        // Supongamos que user.permissions contiene los permisos del usuario
+        const tokenData = {
+          exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
+          username,
+          permissions: user.permissions, // Agrega los permisos a la información del token
+        };
+
+        const token = sign(tokenData, "secret");
 
         response.setHeader('Set-Cookie', `myTokenName=${token}; HttpOnly; Secure; SameSite=Strict; Max-Age=${1000 * 60 * 60 * 24 * 30}; Path=/`);
-        
-        return response.status(200).json({ token }); // Devolver una respuesta JSON y establecer el estado de la respuesta
+
+        // Devuelve una respuesta JSON con el token y los permisos
+        return response.status(200).json({ token, permissions: user.permissions });
       } else {
         return response.status(401).json({
           message: "Credenciales inválidas",

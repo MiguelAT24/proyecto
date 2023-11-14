@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/router"; // Cambio de next/navigation a next/router para evitar errores
 import '/styles/sidebar.css';
-
+import { useGlobalContext } from "../GlobalContext";
 function Home() {
   const [credentials, setCredentials] = useState({
     username: "",
@@ -10,6 +10,7 @@ function Home() {
   });
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
+  const { updatePermissions } = useGlobalContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,10 +18,13 @@ function Home() {
       const res = await axios.post("/api/login", credentials);
 
       if (res.status === 200) {
+        updatePermissions(res.data.permissions);
+        console.log(res.data);
         router.push("/Dashboard");
+      
       }
     } catch (error) {
-      if (error.response.status === 401) {
+      if (error.response && error.response.status === 401) {
         setErrorMessage("Credenciales incorrectas. Por favor, inténtalo de nuevo.");
       } else {
         setErrorMessage("Ocurrió un error inesperado. Por favor, inténtalo más tarde.");

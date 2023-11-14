@@ -24,6 +24,7 @@ export default async function handler(req, res) {
         serie,
         precio,
         vendidoPor,
+        viaje_id, // Añade el viaje_id a la solicitud
       } = req.body;
 
       if (
@@ -35,38 +36,46 @@ export default async function handler(req, res) {
         !asientoSeleccionado ||
         !serie ||
         !precio ||
-        !vendidoPor
+        !vendidoPor ||
+        !viaje_id // Asegúrate de que se proporcione el viaje_id
       ) {
         return res.status(400).json({ error: 'Todos los campos de la venta de asiento son obligatorios.' });
       }
 
-      // Verifica si el asiento ya ha sido vendido u ocupado antes de registrar la venta
+      // Verifica si el asiento ya ha sido vendido u ocupado antes de registrar la venta en el contexto del viaje
       const connection = await connectToDatabase();
+
       const [existingVenta] = await connection.query(
-        'SELECT * FROM ventas WHERE asiento = ? AND vendido != "libre"',
-        [asientoSeleccionado]
+        'SELECT * FROM ventas WHERE asiento = ? AND vendido != "libre" AND viaje_id = ?',
+        [asientoSeleccionado.numero, viaje_id]
       );
 
       if (existingVenta.length > 0) {
-        return res.status(400).json({ error: 'Este asiento ya ha sido vendido u ocupado.' });
+        return res.status(400).json({ error: 'Este asiento ya ha sido vendido u ocupado en este viaje.' });
       }
 
-      // Registra la venta de asiento como "ocupado"
+      // Registra la venta de asiento como "ocupado" en el contexto del viaje
       const [result] = await connection.query(
-        'INSERT INTO ventas (nombre, ci, origen, destino, fecha, asiento, serie, precio, emitido_por, vendido) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "ocupado")',
+        'INSERT INTO ventas (nombre, ci, origen, destino, fecha, asiento, serie, precio, emitido_por, vendido, viaje_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "ocupado", ?)',
         [
           nombre,
           cedulaIdentidad,
           origen,
           destino,
           fecha,
-          asientoSeleccionado,
+          asientoSeleccionado.numero,
           serie,
           precio,
           vendidoPor,
+          viaje_id, // Asocia la venta con el viaje seleccionado
         ]
       );
-      connection.end();
+
+      // Comprueba si se insertó correctamente una fila
+      if (result.affectedRows !== 1) {
+        connection.end();
+        return res.status(500).json({ error: 'Error al crear la venta de asiento.' });
+      }
 
       const nuevaVentaId = result.insertId;
 
@@ -84,6 +93,7 @@ export default async function handler(req, res) {
         vendido: 'ocupado',
       });
     } catch (error) {
+      console.error('Error al crear la venta de asiento:', error);
       res.status(500).json({ error: 'Error al crear la venta de asiento.' });
     }
   } else if (req.method === 'DELETE') {
@@ -99,7 +109,7 @@ export default async function handler(req, res) {
       }
 
       // Verifica si la venta está en un estado que se puede liberar (por ejemplo, "ocupado")
-      if (venta[0].estado === 'ocupado') {
+      if (venta[0].vendido === 'ocupado') { // Cambia "estado" a "vendido"
         // Actualiza el estado del asiento a "libre" y elimina la venta
         await connection.query('UPDATE ventas SET vendido = "libre" WHERE id = ?', [id]);
         connection.end();

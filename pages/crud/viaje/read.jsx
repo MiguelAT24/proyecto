@@ -12,7 +12,7 @@ const fetcher = async (url) => {
 };
 
 export default function ViajeList() {
-  const { data: programacionViajes, error } = useSWR('/api/viajes', fetcher);
+  const { data: viajes, error } = useSWR('/api/viajes', fetcher);
 
   const handleDelete = async (id) => {
     try {
@@ -46,7 +46,7 @@ export default function ViajeList() {
           <Link legacyBehavior href="/crud/viaje/create">
             <a className="btn btn-primary mb-3">Crear Programación de Viaje</a>
           </Link>
-          {programacionViajes ? (
+          {viajes ? (
             <div className="container">
               <table className="table table-striped">
                 <thead>
@@ -64,7 +64,7 @@ export default function ViajeList() {
                   </tr>
                 </thead>
                 <tbody>
-                  {programacionViajes.map((viaje) => (
+                  {viajes.map((viaje) => (
                     <tr key={viaje.id}>
                       <td>{viaje.fecha}</td>
                       <td>{viaje.ho_sa}</td>

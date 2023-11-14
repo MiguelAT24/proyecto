@@ -159,6 +159,7 @@ const Reportes = () => {
                 <th>Origen</th>
                 <th>Destino</th>
                 <th>Fecha</th>
+                <th>Serie</th>
                 <th>Precio</th>
                 <th>Asiento</th>
                 <th>Vendido por</th>
@@ -175,9 +176,9 @@ const Reportes = () => {
                   <td>{venta.destino}</td>
                   <td>{venta.fecha}</td>
                   <td>{venta.serie}</td>
-                  <td>{venta.asiento}</td>
                   <td>${venta.precio}</td>
-                  <td>{venta.vendidoPor}</td>
+                  <td>{venta.asiento}</td>
+                  <td>{venta.emitido_por}</td>
                 </tr>
               ))}
             </tbody>
