@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }) {
     </Provider>
   );
 }
-/*
+
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
@@ -32,5 +32,5 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       });
   });
 }
-*/
+
 export default MyApp;

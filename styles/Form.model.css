@@ -1,0 +1,29 @@
+
+.input{
+width: 100%; display: block;
+background: #f3f3f3;
+padding: 20px;
+border: none;
+font-size: var(--fs-20);
+margin-bottom: 15px;
+}
+
+.textarea {
+resize: none;
+height: 215px;
+margin-bottom: 50px;
+}
+
+.button {
+height: 70px;
+width: 50%; display: block;
+color: var(--white);
+background: var(--black); font-size: var(--fs-20); text-decoration: underline;
+border: none;
+cursor: pointer;
+transition: all ease 0.5s;
+
+}
+.button:hover {
+background: lightcoral; color: var(--black);
+}

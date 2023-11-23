@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Leito from '../../../components/tipo.jsx';
+import Leito from '../../../components/MapAsientos.jsx';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
 import '/styles/styles.css';

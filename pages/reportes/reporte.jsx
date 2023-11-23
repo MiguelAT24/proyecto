@@ -52,7 +52,6 @@ const Reportes = () => {
       // simplemente asigna los datos a setResultados
       setResultados(data);
     } catch (error) {
-      console.error(`Error al obtener datos de la API de ${seccion}:`, error);
     }
   };
 

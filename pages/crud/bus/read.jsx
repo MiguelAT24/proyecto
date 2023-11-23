@@ -2,7 +2,6 @@
 import Head from 'next/head';
 import useSWR, { mutate } from 'swr'; 
 import Link from 'next/link';
-import { useState, useEffect } from 'react'; 
 
 const fetcher = async (url) => {
   const response = await fetch(url);
@@ -48,7 +47,6 @@ export default function BusList() {
         <Link  legacyBehavior href="/crud/bus/create">
           <a className="btn btn-primary mb-3">Agregar Nuevo Bus</a>
         </Link>
-        {/* Resto de tu código */}
       </div>
         {products ? (
             <div className='container'>

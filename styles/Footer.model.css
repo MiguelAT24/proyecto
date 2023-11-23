@@ -1,0 +1,27 @@
+.description {
+    padding: 200px;
+    min-width: 50px;
+}
+
+.title {
+    font-size: var(--fs-32);
+}
+
+.paragraph {
+margin: 30px 0;
+font-size: var(--fs-20);
+line-height: 1.75;
+}
+.social {
+display: flex;
+gap: 35px;
+}
+.social a {
+color: var(--black);
+font-size: var(--fs-20);
+font-weight: 600;
+text-decoration: none;
+}
+.social a:hover {
+text-decoration: underline;
+}

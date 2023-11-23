@@ -30,7 +30,7 @@ const Configuracion = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div data-testid="tu-componente" className="container mt-5">
       <h2 className="mb-4">Configuración General</h2>
       <form>
         <div className="mb-3">

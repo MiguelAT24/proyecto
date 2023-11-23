@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
-import { useRouter } from "next/router"; // Cambio de next/navigation a next/router para evitar errores
+import { useRouter } from "next/router"; 
 import '/styles/sidebar.css';
 import { useGlobalContext } from "../GlobalContext";
+
 function Home() {
   const [credentials, setCredentials] = useState({
     username: "",

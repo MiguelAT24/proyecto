@@ -1,6 +1,6 @@
-import SideNavbar from './Navbar';
+import SideNavbar from './SideNavbar';
 import { useRouter } from 'next/router';
-import Nav from './nav'; 
+import Nav from './Navbar';
 
 const Layout = ({ children}) => {
   const router = useRouter();
