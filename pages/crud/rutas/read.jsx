@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import useSWR, { mutate } from 'swr';
 import Link from 'next/link';
-import { useState } from 'react';
 
 const fetcher = async (url) => {
   const response = await fetch(url);

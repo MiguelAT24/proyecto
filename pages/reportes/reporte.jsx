@@ -33,7 +33,7 @@ const Reportes = () => {
           apiUrl = '/api/rutas';
           break;
         case 'buses':
-          apiUrl = '/api/products';
+          apiUrl = '/api/bus';
           break;
         default:
           break;

@@ -1,6 +1,6 @@
 self.addEventListener('fetch', event => {
   if (event.request.method === 'GET') {
-    if (event.request.url.startsWith('http')) { // Verificar el esquema de la solicitud
+    if (event.request.url.startsWith('http')) { 
       event.respondWith(
         caches.open('my-cache').then(cache => {
           return cache.match(event.request).then(response => {

@@ -1,21 +1,29 @@
+// pages/_app.js
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Provider } from 'react-redux';
+import { QueryClient, QueryClientProvider } from 'react-query'; // Importa QueryClient y QueryClientProvider
+
 import Layout from '../components/Layout';
 import store from '../store';
-import { GlobalProvider } from '../GlobalContext'; // Importa tu GlobalProvider
+import { GlobalProvider } from '../GlobalContext';
 
 if (typeof window !== 'undefined') {
   require('bootstrap/dist/js/bootstrap.bundle.min.js');
 }
 
+const queryClient = new QueryClient(); // Crea una instancia de QueryClient
+
 function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
-      <GlobalProvider> {/* Agrega el GlobalProvider */}
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </GlobalProvider>
+      <QueryClientProvider client={queryClient}> {/* Envuelve con QueryClientProvider */}
+        <GlobalProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </GlobalProvider>
+       
+      </QueryClientProvider>
     </Provider>
   );
 }

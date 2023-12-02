@@ -6,8 +6,8 @@ const Dashboard = () => {
   return (
     
     <div>
-       <h1 className='container p-5'>Bienvenido al Sistema</h1>
-      <div>
+       <h1 className='container p-2'>Bienvenido al Sistema</h1>
+      <div >
         
         {/* Contenido de tu página de Dashboard */}
       </div>

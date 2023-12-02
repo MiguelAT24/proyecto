@@ -9,8 +9,8 @@ jest.mock('next/router', () => ({
     useRouter: jest.fn(),
   }));
   
-  describe('renderizando CrearPage', () => {
-    it('renders correctly', () => {
+  describe('CrearBus component', () => {
+    test('se renderiza correctamente', () => {
       // Simula la ruta y otras propiedades del enrutador que tu componente puede estar utilizando
       useRouter.mockImplementation(() => ({
         route: '/crud/bus/create', // Coloca la ruta de tu página

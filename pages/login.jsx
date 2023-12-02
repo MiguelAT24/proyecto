@@ -35,19 +35,20 @@ function Home() {
 
   return (
     <div
-      className="container-fluid"
-      style={{
-        backgroundImage: `url('/../img/image.png')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        
-      }}
-    >
-       <div
+    className="container-fluid"
+    style={{
+      backgroundImage: `url('/../img/image.png')`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      minHeight: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    <div>
+      <h2 className="text-center text-white mb-4 p-5">SISTEMA DE BOLETERIA</h2>
+      <div
         className="card"
         style={{
           background: "rgba(255, 255, 255, 0.8)", // Fondo semi-transparente
@@ -109,6 +110,7 @@ function Home() {
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

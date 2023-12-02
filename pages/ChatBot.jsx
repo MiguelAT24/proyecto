@@ -1,4 +1,5 @@
-import Chat from "../app/chat";
+import Chat from "../components/chat";
+
 
 const ChatBot= () => {
     return (
@@ -6,7 +7,7 @@ const ChatBot= () => {
       <div>
          <h1 className='container p-5'>Chat en tiempo real</h1>
         <div>
-         <Chat />
+         <Chat/>
         </div>
       </div>
     );

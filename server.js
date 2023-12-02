@@ -5,28 +5,26 @@ const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
+const io = socketio(server, {
   cors: {
-    origin: 'http://localhost:3000', // Replace with your Next.js application origin
+    origin: 'http://localhost:3000', 
   },
 });
 
-
 io.on('connection', (socket) => {
-  console.log('New user connected');
 
-  socket.on('message', (message) => {
+  socket.on('message', (data) => {
+    console.log('Mensaje recibido:', data);
     io.emit('message', {
-      user: socket.id,
-      message: message,
+      user: data.user, // Utilizar el nombre de usuario proporcionado por el cliente
+      message: data.message,
     });
   });
 
   socket.on('disconnect', () => {
-    console.log('User disconnected');
   });
 });
 
 server.listen(4000, () => {
-  console.log('Server listening on port 4000');
+  console.log('Servidor escuchando en el puerto 4000');
 });

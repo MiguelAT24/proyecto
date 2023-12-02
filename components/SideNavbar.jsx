@@ -20,6 +20,7 @@ import {
   faUserCog,
   faLock,
   faRobot,
+  faCloud,
   // Agrega aquí más iconos según sea necesario
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -125,6 +126,12 @@ const SideNavbar = () => {
         <a className="nav-link style={{ color: '#ffff' }}">
           <FontAwesomeIcon icon={faRobot} className="mr-icon" />
           Chat
+        </a>
+      </Link>
+      <Link legacyBehavior href="/Clima" className="navbar-brand">
+        <a className="nav-link style={{ color: '#ffff' }}">
+          <FontAwesomeIcon icon={faCloud} className="mr-icon" />
+          clima
         </a>
       </Link>
 
